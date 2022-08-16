@@ -8,12 +8,13 @@
 import SwiftUI
 
 struct Ocean: Identifiable {
-  let name: String
+  var name: String
   let id = UUID()
 }
 
 struct ContentView: View {
   @State private var multiSelection = Set<UUID>()
+  @State private var isOn = false
   
   private var oceans = [
     Ocean(name: "Pacific"),
@@ -32,14 +33,33 @@ struct ContentView: View {
 //    }
     
     // MARK: Selections
+//    NavigationView {
+//      List(oceans, selection: $multiSelection) {
+//        Text($0.name)
+//      }
+//      .navigationTitle("Oceans")
+//      .toolbar { EditButton() }
+//    }
+//    Text("\(multiSelection.count) selections")
+    
+    // MARK: Refresh
     NavigationView {
-      List(oceans, selection: $multiSelection) {
-        Text($0.name)
+      VStack {
+        List(oceans, selection: $multiSelection) {
+          Text($0.name)
+        }
+        .navigationTitle("Oceans")
+        .refreshable {
+          await getSomeData()
+        }
+        Toggle("Toggle", isOn: $isOn)
       }
-      .navigationTitle("Oceans")
-      .toolbar { EditButton() }
     }
-    Text("\(multiSelection.count) selections")
+  }
+  
+  func getSomeData() async {
+    await Task.sleep(3_000_000_000) // 3seconds
+    isOn.toggle()
   }
 }
 
